@@ -1,15 +1,15 @@
 package modelprovider
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"html/template"
 	"net/http"
-	"strings"
 )
 
-type PageData struct {
-	Title, Body string
+type UserData struct {
+	User string
+	Data map[string]string
 }
 
 type HandlerFunction func(http.ResponseWriter, *http.Request)
@@ -22,32 +22,45 @@ type RouterProvider interface {
 func (c Config) GetRouter() *mux.Router {
 	fmt.Println("Getting routes")
 	router := mux.NewRouter()
-	router.HandleFunc("/", c.GetHandlerFunc())
 	router.HandleFunc("/{action}", c.GetHandlerFunc())
 	return router
 }
 
-func (c Config) RenderResponse(request *http.Request) (*template.Template, error) {
-	path := request.URL.Path
-	trimmedPath := strings.TrimRight(path, "/")
-	templatePath, ok := c.TemplatesMap[trimmedPath]
-	if ok == false {
-		panic("Template not found")
+func (c Config) RenderResponse(w http.ResponseWriter, r *http.Request, user UserData) {
+	js, err := json.Marshal(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	assetsDir := c.PkgDir + "/" + "assets" + "/"
-	return template.ParseFiles(assetsDir + templatePath)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
+	// path := r.URL.Path
+	// trimmedPath := strings.TrimRight(path, "/")
+
+	// templatePath, ok := c.TemplatesMap[trimmedPath]
+
+	// if ok == false {
+	// 	fmt.Println("Throwing template error")
+	// 	return nil, errors.New("Template not found")
+	// }
+	// assetsDir := c.PkgDir + "/" + "assets" + "/"
+	// fmt.Println(assetsDir + templatePath)
+	// tmpl, err := template.ParseFiles(assetsDir + templatePath)
+
+	// if err != nil {
+	// 	fmt.Println("Going to explode now!!")
+	// 	http.Redirect(w, r, "/", http.StatusFound)
+	// }
+	// if err = tmpl.Execute(w, pdata); err != nil {
+	// 	panic(err)
+	// }
 }
 
 func (c Config) GetHandlerFunc() HandlerFunction {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// todo: abstract pagedata provider interface
-		pdata := PageData{}
-		tmpl, err := c.RenderResponse(r)
-		if err != nil {
-			panic(err)
-		}
-		if err = tmpl.Execute(w, pdata); err != nil {
-			panic(err)
-		}
+		pdata := UserData{"alex", map[string]string{"name": "Aleksandr"}}
+		c.RenderResponse(w, r, pdata)
 	}
 }
