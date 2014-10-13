@@ -1,4 +1,4 @@
-package blog
+package modelprovider
 
 import (
 	"fmt"
@@ -27,20 +27,22 @@ func (c Config) GetRouter() *mux.Router {
 	return router
 }
 
-func (c Config) GetTemplateByPath(request *http.Request) (*template.Template, error) {
+func (c Config) RenderResponse(request *http.Request) (*template.Template, error) {
 	path := request.URL.Path
 	trimmedPath := strings.TrimRight(path, "/")
 	templatePath, ok := c.TemplatesMap[trimmedPath]
 	if ok == false {
-		templatePath = "index.html"
+		panic("Template not found")
 	}
-	return template.ParseFiles(c.PkgDir + "/" + "assets" + "/" + templatePath)
+	assetsDir := c.PkgDir + "/" + "assets" + "/"
+	return template.ParseFiles(assetsDir + templatePath)
 }
 
 func (c Config) GetHandlerFunc() HandlerFunction {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// todo: abstract pagedata provider interface
 		pdata := PageData{}
-		tmpl, err := c.GetTemplateByPath(r)
+		tmpl, err := c.RenderResponse(r)
 		if err != nil {
 			panic(err)
 		}

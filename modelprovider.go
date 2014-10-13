@@ -1,4 +1,4 @@
-package blog
+package modelprovider
 
 import (
 	"fmt"

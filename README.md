@@ -1,4 +1,4 @@
-blog
-====
+modelprovider
+=============
 
-Proof-of-concept blog engine written in Go
+Proof-of-concept model provider in Go
