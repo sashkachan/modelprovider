@@ -12,6 +12,10 @@ type UserData struct {
 	Data map[string]string
 }
 
+type Users struct {
+	UsersList []UserData
+}
+
 type HandlerFunction func(http.ResponseWriter, *http.Request)
 
 type RouterProvider interface {
@@ -26,8 +30,8 @@ func (c Config) GetRouter() *mux.Router {
 	return router
 }
 
-func (c Config) RenderResponse(w http.ResponseWriter, r *http.Request, user UserData) {
-	js, err := json.Marshal(user)
+func (c Config) RenderResponse(w http.ResponseWriter, r *http.Request, users Users) {
+	js, err := json.Marshal(users)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -35,32 +39,13 @@ func (c Config) RenderResponse(w http.ResponseWriter, r *http.Request, user User
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
-	// path := r.URL.Path
-	// trimmedPath := strings.TrimRight(path, "/")
-
-	// templatePath, ok := c.TemplatesMap[trimmedPath]
-
-	// if ok == false {
-	// 	fmt.Println("Throwing template error")
-	// 	return nil, errors.New("Template not found")
-	// }
-	// assetsDir := c.PkgDir + "/" + "assets" + "/"
-	// fmt.Println(assetsDir + templatePath)
-	// tmpl, err := template.ParseFiles(assetsDir + templatePath)
-
-	// if err != nil {
-	// 	fmt.Println("Going to explode now!!")
-	// 	http.Redirect(w, r, "/", http.StatusFound)
-	// }
-	// if err = tmpl.Execute(w, pdata); err != nil {
-	// 	panic(err)
-	// }
 }
 
 func (c Config) GetHandlerFunc() HandlerFunction {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// todo: abstract pagedata provider interface
-		pdata := UserData{"alex", map[string]string{"name": "Aleksandr"}}
-		c.RenderResponse(w, r, pdata)
+		users := make([]UserData, 1)
+		users[0] = UserData{"alex", map[string]string{"name": "Aleksandr"}}
+		c.RenderResponse(w, r, Users{users})
 	}
 }
