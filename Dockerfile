@@ -27,5 +27,6 @@ RUN go get github.com/alex-glv/modelprovider
 RUN cd $APP_DIR && \
     go install
 
+EXPOSE 8912
 # Define default command.
 CMD ["bash"]

@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	portPrm := flag.String("port", "8080", "Port number to run http sever")
+	portPrm := flag.String("port", "8912", "Port number to run http sever")
 	flag.Parse()
 	cfg := modelserver.Config{
 		PkgDir: "/Users/alexg/go/src/github.com/alex-glv/modelprovider/",
