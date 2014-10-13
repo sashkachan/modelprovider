@@ -1,4 +1,4 @@
-package modelprovider
+package modelserver
 
 import (
 	"encoding/json"

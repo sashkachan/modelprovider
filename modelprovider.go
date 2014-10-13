@@ -1,18 +1,16 @@
-package modelprovider
+package main
 
 import (
-	"fmt"
-	"net/http"
+	"github.com/alex-glv/modelprovider/modelserver"
 )
 
-type Config struct {
-	PkgDir       string
-	TemplatesMap map[string]string
-}
-
-func StartServer(cfg Config) {
-	fmt.Println("Starting server on :8080")
-	routerProvider := RouterProvider(cfg)
-	http.Handle("/", routerProvider.GetRouter())
-	http.ListenAndServe(":8080", nil)
+func main() {
+	cfg := modelserver.Config{
+		PkgDir: "/Users/alexg/go/src/github.com/alex-glv/modelprovider/modelserver/",
+		TemplatesMap: map[string]string{
+			"/users": "users.json",
+		},
+		Port: "8080",
+	}
+	modelserver.StartServer(cfg)
 }
