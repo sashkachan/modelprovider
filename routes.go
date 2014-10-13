@@ -2,9 +2,11 @@ package modelprovider
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
+	"strings"
 )
 
 type UserData struct {
@@ -44,8 +46,17 @@ func (c Config) RenderResponse(w http.ResponseWriter, r *http.Request, users Use
 func (c Config) GetHandlerFunc() HandlerFunction {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// todo: abstract pagedata provider interface
-		users := make([]UserData, 1)
-		users[0] = UserData{"alex", map[string]string{"name": "Aleksandr"}}
-		c.RenderResponse(w, r, Users{users})
+		path := strings.TrimRight(r.URL.Path, "/")
+		switch path[1:] {
+		case "users":
+			users := make([]UserData, 1)
+			users[0] = UserData{"alex", map[string]string{"name": "Aleksandr"}}
+			c.RenderResponse(w, r, Users{users})
+			break
+		default:
+			http.Error(w, errors.New("Not found").Error(), 404)
+			break
+		}
+
 	}
 }
