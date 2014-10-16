@@ -6,14 +6,13 @@ import (
 )
 
 type Config struct {
-	PkgDir       string
-	TemplatesMap map[string]string
-	Port         string
+	PkgDir string
+	Port   string
 }
 
 func StartServer(cfg Config) {
 	fmt.Println("Starting server on :" + cfg.Port)
 	routerProvider := RouterProvider(cfg)
 	http.Handle("/", routerProvider.GetRouter())
-	http.ListenAndServe(":"+cfg.Port, nil)
+	http.ListenAndServe("127.0.0.1:"+cfg.Port, nil)
 }
