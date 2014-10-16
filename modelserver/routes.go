@@ -44,13 +44,14 @@ func (c Config) RenderResponse(w http.ResponseWriter, r *http.Request, users Use
 }
 
 func (c Config) GetHandlerFunc() HandlerFunction {
+	// Bootstrap? Get data from the database? ...
 	return func(w http.ResponseWriter, r *http.Request) {
-		// todo: abstract pagedata provider interface
 		path := strings.TrimRight(r.URL.Path, "/")
 		switch path[1:] {
 		case "users":
-			users := make([]UserData, 1)
-			users[0] = UserData{"alex", map[string]string{"name": "Aleksandr"}}
+			users := make([]UserData, 2)
+			users[0] = UserData{"mitch", map[string]string{"name": "Mitchy Mitch"}}
+			users[1] = UserData{"stich", map[string]string{"name": "Stichy Stitch"}}
 			c.RenderResponse(w, r, Users{users})
 			break
 		default:
