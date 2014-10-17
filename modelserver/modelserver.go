@@ -14,5 +14,5 @@ func StartServer(cfg Config) {
 	fmt.Println("Starting server on :" + cfg.Port)
 	routerProvider := RouterProvider(cfg)
 	http.Handle("/", routerProvider.GetRouter())
-	http.ListenAndServe("127.0.0.1:"+cfg.Port, nil)
+	http.ListenAndServe(":"+cfg.Port, nil)
 }
